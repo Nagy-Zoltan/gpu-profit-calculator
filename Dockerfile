@@ -12,4 +12,6 @@ RUN mkdir results
 
 RUN pip install -r requirements.txt
 
+EXPOSE 80
+
 CMD ["bash", "-c", "./start.sh"]
