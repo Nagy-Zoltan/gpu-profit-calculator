@@ -17,9 +17,11 @@ class ArukeresoHandler:
         self.raw_html = self.get_raw_html(graphic_card_name)
         self.descriptions = self.get_descriptions()
         self.prices = self.get_prices()
-        print(len(self.prices))
-        print(len(self.descriptions))
         self._clean_results()
+        if self.prices:
+            self.cheapest = self.prices[0]
+        else:
+            self.cheapest = None
 
     def get_raw_html(self, graphic_card_name, order_by='cheap'):
         url = self.graphic_card_url
@@ -35,30 +37,43 @@ class ArukeresoHandler:
     def get_descriptions(self):
         return [
             elem.text for elem in
-            self.raw_html.xpath('//*[contains(concat( " ", @class, " " ), concat( " ", "top-center", " " ))]')
+            self.raw_html.xpath(Arukereso.DESCRIPTIONS_XPATH.value)
         ]
 
     def get_prices(self):
         raw_prices = [
             elem.text for elem in
-            self.raw_html.xpath('//*[contains(concat( " ", @class, " " ), concat( " ", "price", " " ))]')
+            self.raw_html.xpath(Arukereso.PRICES_XPATH.value)
         ]
 
         return [int(''.join(re.findall('[\d]+?', price))) for price in raw_prices[::2]]
 
     def _name_present_in_description(self, description):
         parts = self.graphic_card_name.lower().split()
-        print(parts)
         description_lower = description.splitlines()[0].lower()
-        for part in parts:
-            if part + ' ' not in description_lower:
-                return False
 
         if 'ti' in parts:
             ti_place = parts.index('ti')
-            ti_name = ' '.join(parts[ti_place - 1: ti_place + 1])
-            if ti_name not in description_lower:
+            main_type = parts[ti_place - 1]
+
+            for part in parts:
+                mod_part = part + ' ' if part != 'lhr' else part
+                if mod_part == main_type + ' ':
+                    if mod_part not in description_lower and main_type + 'ti' not in description_lower:
+                        return False
+                else:
+                    if mod_part not in description_lower:
+                        return False
+
+            if main_type not in description_lower or 'ti ' not in description_lower:
                 return False
+        else:
+            if 'ti ' in description_lower:
+                return False
+
+            for part in parts:
+                if part + ' ' not in description_lower:
+                    return False
 
         if 'lhr' not in parts and 'lhr' in description_lower:
             return False
@@ -76,17 +91,9 @@ class ArukeresoHandler:
         filtered_prices = []
 
         for d, p in zip(descriptions, prices):
-            print('-'*50)
             if self._name_present_in_description(d):
                 filtered_descriptions.append(d)
                 filtered_prices.append(p)
 
         self.descriptions = filtered_descriptions
         self.prices = filtered_prices
-
-
-arukereso_handler = ArukeresoHandler('RTX 3090 Ti')
-
-
-print(len(arukereso_handler.prices))
-print(len(arukereso_handler.descriptions))

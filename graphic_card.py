@@ -1,8 +1,18 @@
+import more_itertools
+
+from arukereso import ArukeresoHandler
+from constants import _GraphicCard, PESSIMISTIC_MUL
+from utils import usd_to_huf
+
+
 class GraphicCard:
 
-    def __init__(self, *args):
+    def __init__(self, max_profit_usd, *args):
 
         """
+        :param max_profit_usd:
+        1.4
+
         :param args:
         [
             'NVIDIA GeForce RTX 3090 Ti (*)',
@@ -14,55 +24,42 @@ class GraphicCard:
         ]
         """
 
+        self.daily_profit_usd = max_profit_usd
+        self.daily_profit_usd_pessimistic = max_profit_usd * PESSIMISTIC_MUL
+        self.daily_profit_huf = usd_to_huf(self.daily_profit_usd)
+        self.daily_profit_huf_pessimistic = self.daily_profit_huf * PESSIMISTIC_MUL
+        self.monthly_profit_usd = self.daily_profit_usd * 30
+        self.monthly_profit_usd_pessimistic = self.monthly_profit_usd * PESSIMISTIC_MUL
+        self.monthly_profit_huf = self.daily_profit_huf * 30
+        self.monthly_profit_huf_pessimistic = self.monthly_profit_huf * PESSIMISTIC_MUL
+
         self.name = args[0]
-        self.arukereso_name = self.name.removeprefix('NVIDIA ').removeprefix('GeForce ').removeprefix(
-            'AMD Radeon ').removesuffix(' (*)')
-        self.arukereso_url = ARUKERESO_BASEURL + self.arukereso_name.replace(' ', '+')
         self.release_date = args[1]
         self.hashrate = args[2]
         self.revenue_24h = args[3]
         self.profit_24h = args[4]
-        # self.max_profit_number = float(args[4][1:])
 
         self.top_coins_profit = dict(list(
             more_itertools.chunked(args[5].replace(' $', '\n$').replace(' -$', '\n-$').replace('$', '').split('\n'),
                                    2)))
 
-    def _name_present_in_description(self, description):
-        parts = self.arukereso_name.lower().split()
-        description_lower = description.splitlines()[0].lower()
-        for part in parts:
-            if part + ' ' not in description_lower:
-                return False
+        self.arukereso_name = self._get_arukereso_name()
+        self.arukereso_handler = ArukeresoHandler(self.arukereso_name)
+        self.price = self.arukereso_handler.cheapest
 
-        if 'ti' in parts:
-            ti_place = parts.index('ti')
-            ti_name = ' '.join(parts[ti_place - 1: ti_place + 1])
-            if ti_name not in description_lower:
-                return False
+        if self.price is not None:
+            self.payoff_huf = round(self.price / self.monthly_profit_huf, 1)
+            self.payoff_huf_pessimistic = round(self.price / self.monthly_profit_huf_pessimistic, 1)
+        else:
+            self.payoff_huf = float('inf')
+            self.payoff_huf_pessimistic = float('inf')
 
-        if 'lhr' not in parts and 'lhr' in description_lower:
-            return False
-
-        return True
-
-    def _filter_arukereso_results(self):
-        descriptions = self.descriptions
-        prices = self.prices
-
-        if not descriptions or not prices:
-            return
-
-        filtered_desctriptions = []
-        filtered_prices = []
-
-        for d, p in zip(descriptions, prices):
-            if self._name_present_in_description(d):
-                filtered_desctriptions.append(d)
-                filtered_prices.append(p)
-
-        self.descriptions = filtered_desctriptions
-        self.prices = filtered_prices
+    def _get_arukereso_name(self):
+        return self.name\
+            .removeprefix(_GraphicCard.NVIDIA_PREFIX.value)\
+            .removeprefix(_GraphicCard.GEFORCE_PREFIX.value)\
+            .removeprefix(_GraphicCard.AMD_RADEON_PREFIX.value)\
+            .removesuffix(_GraphicCard.STAR_SUFFIX.value)
 
     def __repr__(self):
         return str(vars(self))

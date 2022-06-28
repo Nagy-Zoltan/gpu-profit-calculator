@@ -1,0 +1,11 @@
+services:
+  web-app:
+    image: gpu-profits
+    ports:
+      - '5000:5000'
+    networks:
+      main:
+
+networks:
+  main:
+    driver: driver
