@@ -1,4 +1,4 @@
-from constants import Price
+from core.constants import Price
 
 
 def usd_to_huf(usd):

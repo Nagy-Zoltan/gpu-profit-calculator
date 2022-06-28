@@ -2,7 +2,7 @@ import re
 
 import requests_html
 
-from constants import Arukereso
+from core.constants import Arukereso
 
 
 class ArukeresoHandler:

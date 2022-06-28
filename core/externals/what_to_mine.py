@@ -3,8 +3,8 @@ import re
 import requests_html
 import more_itertools
 
-from constants import WhatToMine, Price
-from utils import huf_to_usd
+from core.constants import WhatToMine, Price
+from core.utils import huf_to_usd
 
 
 class WhatToMineHandler:

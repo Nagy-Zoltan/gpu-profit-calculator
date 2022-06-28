@@ -1,8 +1,8 @@
 import more_itertools
 
-from arukereso import ArukeresoHandler
-from constants import _GraphicCard, PESSIMISTIC_MUL
-from utils import usd_to_huf
+from core.externals.arukereso import ArukeresoHandler
+from core.constants import _GraphicCard, PESSIMISTIC_MUL
+from core.utils import usd_to_huf
 
 
 class GraphicCard:

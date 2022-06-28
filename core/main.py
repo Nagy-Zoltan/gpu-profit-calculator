@@ -1,8 +1,8 @@
 import pandas as pd
 
-from what_to_mine import WhatToMineHandler
-from graphic_card import GraphicCard
-from constants import GROSS_TO_NET_DIV
+from core.externals.what_to_mine import WhatToMineHandler
+from core.graphic_card import GraphicCard
+from core.constants import GROSS_TO_NET_DIV
 
 what_to_mine_handler = WhatToMineHandler()
 
@@ -41,9 +41,5 @@ def main():
     payoffs = get_payoffs(graphic_cards)
     payoff_df = create_payoff_df(payoffs)
 
-    payoff_df.to_csv('results.csv', index=False)
-    payoff_df.to_excel('results.xlsx', index=False)
-
-
-if __name__ == '__main__':
-    main()
+    payoff_df.to_csv('/gpu_profits/results/results.csv', index=False)
+    payoff_df.to_excel('/gpu_profits/results/results.xlsx', index=False)
