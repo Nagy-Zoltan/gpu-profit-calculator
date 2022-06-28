@@ -1,5 +1,7 @@
 FROM python
 
+USER root
+
 ENV APP_HOME="/gpu_profits"
 WORKDIR $APP_HOME
 
