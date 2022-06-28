@@ -14,4 +14,5 @@ RUN pip install -r requirements.txt
 
 EXPOSE 80
 
+RUN chmod 777 ./start.sh
 CMD ["bash", "-c", "./start.sh"]
