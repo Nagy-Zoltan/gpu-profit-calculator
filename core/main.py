@@ -8,6 +8,9 @@ from core.constants import GROSS_TO_NET_DIV, NUMBER_OF_THREADS
 from core.utils import divide_list_to_sublists
 
 
+what_to_mine_handler = WhatToMineHandler()
+
+
 def get_graphic_cards(what_to_mine_handler):
     threads = []
     graphic_cards = []
@@ -58,7 +61,6 @@ def create_payoff_df(payoffs):
 
 
 def main():
-    what_to_mine_handler = WhatToMineHandler()
 
     graphic_cards = get_graphic_cards(what_to_mine_handler)
     payoffs = get_payoffs(graphic_cards)
