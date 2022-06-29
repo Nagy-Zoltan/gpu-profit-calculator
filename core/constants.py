@@ -3,7 +3,6 @@ from enum import Enum
 
 PESSIMISTIC_MUL = 0.85
 GROSS_TO_NET_DIV = 1.27
-NUMBER_OF_THREADS = 8
 
 
 class Arukereso(Enum):
@@ -47,6 +46,8 @@ class _GraphicCard(Enum):
     GEFORCE_PREFIX = 'GeForce '
     AMD_RADEON_PREFIX = 'AMD Radeon '
     STAR_SUFFIX = ' (*)'
+
+    NUMBER_OF_THREADS = 8
 
 
 class Price(Enum):

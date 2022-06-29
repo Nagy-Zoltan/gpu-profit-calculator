@@ -4,27 +4,25 @@ import pandas as pd
 
 from core.externals.what_to_mine import WhatToMineHandler
 from core.graphic_card import GraphicCard
-from core.constants import GROSS_TO_NET_DIV, NUMBER_OF_THREADS
+from core.constants import GROSS_TO_NET_DIV, _GraphicCard
 from core.utils import divide_list_to_sublists
-
-
-what_to_mine_handler = WhatToMineHandler()
 
 
 def get_graphic_cards(what_to_mine_handler):
     threads = []
     graphic_cards = []
 
-    profits = list(what_to_mine_handler.profits)
+    profits = list(what_to_mine_handler.profits.values())
     overviews = what_to_mine_handler.graphic_card_overviews
 
-    profit_chunks = divide_list_to_sublists(profits, NUMBER_OF_THREADS)
-    overview_chunks = divide_list_to_sublists(overviews, NUMBER_OF_THREADS)
+    profit_chunks = divide_list_to_sublists(profits, _GraphicCard.NUMBER_OF_THREADS.value)
+    overview_chunks = divide_list_to_sublists(overviews, _GraphicCard.NUMBER_OF_THREADS.value)
 
     def add_to_graphic_cards(profits, overviews):
         for profit, overview in zip(profits, overviews):
             graphic_card = GraphicCard(profit, *overview)
             graphic_cards.append(graphic_card)
+            print('Card added')
 
     for pc, oc in zip(profit_chunks, overview_chunks):
         thread = Thread(target=add_to_graphic_cards, args=(pc, oc))
@@ -61,6 +59,8 @@ def create_payoff_df(payoffs):
 
 
 def main():
+    what_to_mine_handler = WhatToMineHandler()
+    print(what_to_mine_handler.profits)
 
     graphic_cards = get_graphic_cards(what_to_mine_handler)
     payoffs = get_payoffs(graphic_cards)
