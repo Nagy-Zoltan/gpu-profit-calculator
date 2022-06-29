@@ -40,6 +40,44 @@ class WhatToMine(Enum):
     CARD_OVERVIEW_TABLE_XPATH = '//td'
     CARD_DETAILS_TABLE_XPATH = '//td'
 
+    WHITELISTED_GPU_NAMES = [
+        'rtx 3060 ti',
+        'rtx 3060 ti lhr',
+        'rtx 3060',
+        'rtx 3070',
+        'rtx 3070 ti',
+        'rtx 3060 lhr',
+        'rtx 3080 lhr',
+        'rtx 3070 lhr',
+        'rtx 3080',
+        'rx 6700 xt',
+        'rtx 3080 ti',
+        'rtx 2060',
+        'rx 6600',
+        'gtx 1660 ti',
+        'rtx 3080 12gb',
+        'gtx 1660 super',
+        'rx 6800',
+        'rx 6600 xt',
+        'rtx a2000 6gb',
+        'rtx 2060 super',
+        'gtx 1660',
+        'rx 6800 xt',
+        'rx 6750 xt',
+        'rtx 3090',
+        'rtx 3050',
+        'rx 6900 xt',
+        'rx 580 8gb',
+        'rx 6650 xt',
+        'rtx 3090 ti',
+        'rtx a4000',
+        'rtx a5000',
+        'rx 6950 xt',
+        'gtx 1050 ti',
+        'rtx a4500',
+        'rx 5500 xt 8gb'
+    ]
+
 
 class _GraphicCard(Enum):
     NVIDIA_PREFIX = 'NVIDIA '

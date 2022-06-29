@@ -3,7 +3,7 @@ import re
 import requests_html
 import more_itertools
 
-from core.constants import WhatToMine, Price
+from core.constants import WhatToMine, _GraphicCard, Price
 from core.utils import huf_to_usd
 
 
@@ -22,8 +22,21 @@ class WhatToMineHandler:
         self.profits = dict.fromkeys(self.gpu_url_names)
         self.get_profits()
 
-    def _get_graphic_cards_names_in_url(self):
-        return re.findall(WhatToMine.CARD_REGEX.value, self.gpus_raw_html.text)
+    def _get_graphic_cards_names_in_url(self, filter_names=False):
+        all_url_names = re.findall(WhatToMine.CARD_REGEX.value, self.gpus_raw_html.text)
+        if filter_names:
+            filtered_url_names = []
+            for name in all_url_names:
+                mod_name = ' '.join(name.split('-')[1:])\
+                              .removeprefix(_GraphicCard.NVIDIA_PREFIX.value.lower())\
+                              .removeprefix(_GraphicCard.GEFORCE_PREFIX.value.lower())\
+                              .removeprefix(_GraphicCard.AMD_RADEON_PREFIX.value.lower())\
+                              .removesuffix(_GraphicCard.STAR_SUFFIX.value.lower())
+                if mod_name.lower() in WhatToMine.WHITELISTED_GPU_NAMES.value:
+                    filtered_url_names.append(name)
+            return filtered_url_names
+        else:
+            return all_url_names
 
     def get_graphic_card_overviews(self):
         table = self.gpus_raw_html.html.xpath(WhatToMine.CARD_OVERVIEW_TABLE_XPATH.value)
